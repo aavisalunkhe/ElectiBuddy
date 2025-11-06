@@ -155,7 +155,7 @@
             border-radius: 10px;
         }
 
-        .query-btn {
+        .query-btn, .action-btn {
             padding: 12px 25px;
             margin: 5px;
             background: #667eea;
@@ -167,10 +167,34 @@
             transition: all 0.3s;
         }
 
-        .query-btn:hover {
+        .query-btn:hover, .action-btn:hover {
             background: #764ba2;
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-success {
+            background: #27ae60;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+        }
+
+        .btn-warning:hover {
+            background: #e67e22;
         }
 
         .chart-container {
@@ -227,6 +251,113 @@
             color: white;
         }
 
+        .badge-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            animation: slideDown 0.3s;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
+        }
+
+        .action-icons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .icon-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+
+        .icon-btn.edit {
+            background: #3498db;
+            color: white;
+        }
+
+        .icon-btn.delete {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .icon-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
         footer {
             text-align: center;
             color: white;
@@ -235,13 +366,44 @@
             background: rgba(255,255,255,0.1);
             border-radius: 15px;
         }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            animation: fadeIn 0.3s;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .vote-card {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .vote-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>Election Management System</h1>
-            <p class="subtitle">Database Application</p>
             <p style="color: #999; margin-top: 10px;">Bhargavi Salunkhe, Sakshi Patil, Shivanjali Pawar</p>
         </header>
 
@@ -251,8 +413,9 @@
             <button class="tab-btn" onclick="showTab('candidates')">Candidates</button>
             <button class="tab-btn" onclick="showTab('voters')">Voters</button>
             <button class="tab-btn" onclick="showTab('elections')">Elections</button>
-            <button class="tab-btn" onclick="showTab('results')">Results</button>
-            <button class="tab-btn" onclick="showTab('queries')">SQL Queries</button>
+            <button class="tab-btn" onclick="showTab('results')">Manage Results</button>
+            <button class="tab-btn" onclick="showTab('voting')">Cast Vote</button>
+            <button class="tab-btn" onclick="showTab('queries')">Queries</button>
             <button class="tab-btn" onclick="showTab('about')">About</button>
         </div>
 
@@ -282,8 +445,13 @@
         </div>
 
         <div id="parties" class="content">
-            <h2 class="section-title">Political Parties</h2>
+            <h2 class="section-title">Political Parties Management</h2>
+            <div class="toolbar">
+                <button class="action-btn btn-success" onclick="openAddPartyModal()">Add New Party</button>
+                <button class="action-btn btn-warning" onclick="exportData('parties')">Export Data</button>
+            </div>
             <input type="text" class="search-box" placeholder="Search parties..." onkeyup="searchTable(this, 'partiesTable')">
+            <div id="partyAlert"></div>
             <table id="partiesTable">
                 <thead>
                     <tr>
@@ -291,6 +459,7 @@
                         <th>Party Name</th>
                         <th>Symbol</th>
                         <th>Candidates</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="partiesBody"></tbody>
@@ -298,8 +467,13 @@
         </div>
 
         <div id="candidates" class="content">
-            <h2 class="section-title">Candidates</h2>
+            <h2 class="section-title">Candidates Management</h2>
+            <div class="toolbar">
+                <button class="action-btn btn-success" onclick="openAddCandidateModal()"> Add New Candidate</button>
+                <button class="action-btn btn-warning" onclick="exportData('candidates')">Export Data</button>
+            </div>
             <input type="text" class="search-box" placeholder="Search candidates..." onkeyup="searchTable(this, 'candidatesTable')">
+            <div id="candidateAlert"></div>
             <table id="candidatesTable">
                 <thead>
                     <tr>
@@ -307,6 +481,7 @@
                         <th>Name</th>
                         <th>Party</th>
                         <th>Election ID</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="candidatesBody"></tbody>
@@ -314,8 +489,13 @@
         </div>
 
         <div id="voters" class="content">
-            <h2 class="section-title">Registered Voters</h2>
+            <h2 class="section-title">Registered Voters Management</h2>
+            <div class="toolbar">
+                <button class="action-btn btn-success" onclick="openAddVoterModal()"> Register New Voter</button>
+                <button class="action-btn btn-warning" onclick="exportData('voters')">Export Data</button>
+            </div>
             <input type="text" class="search-box" placeholder="Search voters..." onkeyup="searchTable(this, 'votersTable')">
+            <div id="voterAlert"></div>
             <table id="votersTable">
                 <thead>
                     <tr>
@@ -324,6 +504,7 @@
                         <th>Gender</th>
                         <th>Authority ID</th>
                         <th>Aadhaar No</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="votersBody"></tbody>
@@ -331,7 +512,12 @@
         </div>
 
         <div id="elections" class="content">
-            <h2 class="section-title">Elections</h2>
+            <h2 class="section-title">Elections Management</h2>
+            <div class="toolbar">
+                <button class="action-btn btn-success" onclick="openAddElectionModal()"> Create New Election</button>
+                <button class="action-btn btn-warning" onclick="exportData('elections')">Export Data</button>
+            </div>
+            <div id="electionAlert"></div>
             <table>
                 <thead>
                     <tr>
@@ -341,6 +527,7 @@
                         <th>Result Date</th>
                         <th>Ruling Span</th>
                         <th>Authority</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="electionsBody"></tbody>
@@ -348,7 +535,12 @@
         </div>
 
         <div id="results" class="content">
-            <h2 class="section-title">Election Results & Votes</h2>
+            <h2 class="section-title">Election Results Management</h2>
+            <div class="toolbar">
+                <button class="action-btn btn-success" onclick="openAddVoteModal()">Add Vote Record</button>
+                <button class="action-btn" onclick="generateResultsReport()">Generate Report</button>
+            </div>
+            <div id="voteAlert"></div>
             <div class="chart-container">
                 <canvas id="votesChart"></canvas>
             </div>
@@ -360,21 +552,42 @@
                         <th>Date</th>
                         <th>Election ID</th>
                         <th>Voter</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="votesBody"></tbody>
             </table>
         </div>
 
+        <div id="voting" class="content">
+            <h2 class="section-title">Cast Your Vote</h2>
+            <div id="votingAlert"></div>
+            <div class="vote-card">
+                <h4>Select Election</h4>
+                <select id="voteElectionSelect" onchange="loadCandidatesForVoting()" style="width: 100%; padding: 10px; border-radius: 5px;">
+                    <option value="">-- Select Election --</option>
+                </select>
+            </div>
+            <div class="vote-card">
+                <h4>Select Voter</h4>
+                <select id="voteVoterSelect" style="width: 100%; padding: 10px; border-radius: 5px;">
+                    <option value="">-- Select Your Voter ID --</option>
+                </select>
+            </div>
+            <div id="candidatesVotingList"></div>
+            <button class="action-btn btn-success" onclick="submitVote()" style="margin-top: 20px;">🗳️ Submit Vote</button>
+        </div>
+
         <div id="queries" class="content">
-            <h2 class="section-title">SQL Query Results</h2>
+            <h2 class="section-title">Custom SQL Queries</h2>
             <div class="query-section">
-                <h3>Execute Pre-defined Queries:</h3>
+                <h3>Pre-defined Queries:</h3>
                 <button class="query-btn" onclick="executeQuery(1)">Party with Most Candidates (After 1989)</button>
                 <button class="query-btn" onclick="executeQuery(2)">Voter Change % (2010-2015)</button>
                 <button class="query-btn" onclick="executeQuery(3)">Election Authority History</button>
                 <button class="query-btn" onclick="executeQuery(4)">Non-Voter Citizens</button>
-                <button class="query-btn" onclick="executeQuery(5)">State Assembly Authorities</button>
+                <button class="query-btn" onclick="executeQuery(5)">Top 3 Candidates by Votes</button>
+                <button class="query-btn" onclick="executeQuery(6)">Voter Turnout by Election</button>
             </div>
             <div id="queryResults" style="margin-top: 20px;"></div>
         </div>
@@ -383,15 +596,17 @@
             <h2 class="section-title">About the Project</h2>
             <div style="line-height: 1.8;">
                 <h3 style="color: #667eea; margin-top: 20px;">Project Description</h3>
-                <p>This Election Management System is a comprehensive database application that models the Indian election system, including various levels from Panchayat to Lok Sabha elections.</p>
+                <p>This Election Management System is a comprehensive database application that models the Indian election system with full CRUD operations, interactive data management, and real-time analytics.</p>
                 
                 <h3 style="color: #667eea; margin-top: 20px;">Key Features</h3>
                 <ul style="margin-left: 20px; margin-top: 10px;">
-                    <li>Manages multiple types of elections (Rajya Sabha, Lok Sabha, State Assembly, Panchayat)</li>
-                    <li>Tracks parties, candidates, voters, and election authorities</li>
-                    <li>Stores voting records and election results</li>
-                    <li>Normalized database schema to reduce data redundancy</li>
-                    <li>Comprehensive SQL queries for data analysis</li>
+                    <li><strong>CRUD Operations:</strong> Create, Read, Update, Delete functionality for all entities</li>
+                    <li><strong>Interactive Voting:</strong> Simulate vote casting with real-time updates</li>
+                    <li><strong>Results Management:</strong> Add and manage election results dynamically</li>
+                    <li><strong>Data Export:</strong> Export data to JSON format for backup</li>
+                    <li><strong>Custom Queries:</strong> Execute pre-defined SQL-like queries</li>
+                    <li><strong>Real-time Analytics:</strong> Live charts and statistics</li>
+                    <li><strong>Search & Filter:</strong> Advanced search across all tables</li>
                 </ul>
 
                 <h3 style="color: #667eea; margin-top: 20px;">Database Schema</h3>
@@ -410,7 +625,7 @@
                 <ul style="margin-left: 20px; margin-top: 10px;">
                     <li>Frontend: HTML5, CSS3, Vanilla JavaScript</li>
                     <li>Visualization: Chart.js</li>
-                    <li>Database: MySQL (backend) / JavaScript Objects (demo)</li>
+                    <li>Data Storage: In-memory JavaScript Objects (Session-based)</li>
                     <li>Deployment: GitHub Pages</li>
                 </ul>
 
@@ -425,13 +640,144 @@
 
         <footer>
             <p>Election Management System - DBMS Project 2025</p>
-            <p style="margin-top: 10px; font-size: 0.9em;">Database Application Development Assignment</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">Interactive Database Application with Full CRUD Operations</p>
         </footer>
+    </div>
+
+    <!-- Modals -->
+    <div id="partyModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('partyModal')">&times;</span>
+            <h2 id="partyModalTitle">Add New Party</h2>
+            <form id="partyForm" onsubmit="saveParty(event)">
+                <input type="hidden" id="partyId">
+                <div class="form-group">
+                    <label>Party Name *</label>
+                    <input type="text" id="partyName" required>
+                </div>
+                <div class="form-group">
+                    <label>Symbol *</label>
+                    <input type="text" id="partySymbol" required>
+                </div>
+                <button type="submit" class="action-btn btn-success">Save Party</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="candidateModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('candidateModal')">&times;</span>
+            <h2 id="candidateModalTitle">Add New Candidate</h2>
+            <form id="candidateForm" onsubmit="saveCandidate(event)">
+                <input type="hidden" id="candidateId">
+                <div class="form-group">
+                    <label>Candidate Name *</label>
+                    <input type="text" id="candidateName" required>
+                </div>
+                <div class="form-group">
+                    <label>Party *</label>
+                    <select id="candidateParty" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Election *</label>
+                    <select id="candidateElection" required></select>
+                </div>
+                <button type="submit" class="action-btn btn-success">Save Candidate</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="voterModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('voterModal')">&times;</span>
+            <h2 id="voterModalTitle">Register New Voter</h2>
+            <form id="voterForm" onsubmit="saveVoter(event)">
+                <input type="hidden" id="voterId">
+                <div class="form-group">
+                    <label>Voter Name *</label>
+                    <input type="text" id="voterName" required>
+                </div>
+                <div class="form-group">
+                    <label>Gender *</label>
+                    <select id="voterGender" required>
+                        <option value="">Select</option>
+                        <option value="M">Male</option>
+                        <option value="F">Female</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Authority ID *</label>
+                    <select id="voterAuthority" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Aadhaar Number *</label>
+                    <input type="number" id="voterAadhaar" required>
+                </div>
+                <button type="submit" class="action-btn btn-success">Register Voter</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="electionModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('electionModal')">&times;</span>
+            <h2 id="electionModalTitle">Create New Election</h2>
+            <form id="electionForm" onsubmit="saveElection(event)">
+                <input type="hidden" id="electionId">
+                <div class="form-group">
+                    <label>Number of Voters *</label>
+                    <input type="number" id="electionVoters" required>
+                </div>
+                <div class="form-group">
+                    <label>Number of Participants *</label>
+                    <input type="number" id="electionParticipants" required>
+                </div>
+                <div class="form-group">
+                    <label>Result Date *</label>
+                    <input type="date" id="electionResultDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Ruling Span (years) *</label>
+                    <input type="number" id="electionRuling" required>
+                </div>
+                <div class="form-group">
+                    <label>Election Authority *</label>
+                    <select id="electionAuthority" required></select>
+                </div>
+                <button type="submit" class="action-btn btn-success">Create Election</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="voteModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('voteModal')">&times;</span>
+            <h2>Add Vote Record</h2>
+            <form id="voteForm" onsubmit="saveVote(event)">
+                <div class="form-group">
+                    <label>Candidate *</label>
+                    <select id="voteCandidate" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Date *</label>
+                    <input type="date" id="voteDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Election *</label>
+                    <select id="voteElection" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Voter *</label>
+                    <select id="voteVoter" required></select>
+                </div>
+                <button type="submit" class="action-btn btn-success">Save Vote</button>
+            </form>
+        </div>
     </div>
 
     <script>
         // Database Objects
-        const db = {
+        let db = {
             parties: [
                 {id: 1, name: 'BJP', symbol: 'Lotus'},
                 {id: 3, name: 'Congress', symbol: 'Hand'},
@@ -452,7 +798,7 @@
                 {id: 10, name: 'Vishnu', partyId: 1, electionId: 109}
             ],
             voters: [
-                {id: 1, name: 'Bhargavi', sex: 'M', authorityId: 10, aadhaar: 1412},
+                {id: 1, name: 'Bhargavi', sex: 'F', authorityId: 10, aadhaar: 1412},
                 {id: 2, name: 'Ram', sex: 'M', authorityId: 20, aadhaar: 1734},
                 {id: 9, name: 'Sita', sex: 'F', authorityId: 20, aadhaar: 1812},
                 {id: 10, name: 'Siva', sex: 'M', authorityId: 30, aadhaar: 1914},
@@ -462,43 +808,45 @@
                 {id: 20, name: 'Mothra', sex: 'F', authorityId: 10, aadhaar: 1893}
             ],
             elections: [
-                {id: 101, voters: 1000, participants: 6, resultDate: '2019-3-22', ruling: '5', authorityId: 10},
-                {id: 102, voters: 1100, participants: 7, resultDate: '2017-1-1', ruling: '6', authorityId: 20},
-                {id: 103, voters: 5000, participants: 8, resultDate: '2016-5-3', ruling: '5', authorityId: 30},
-                {id: 104, voters: 7000, participants: 5, resultDate: '2013-2-7', ruling: '5', authorityId: 10},
-                {id: 105, voters: 8000, participants: 3, resultDate: '1946-1-6', ruling: '6', authorityId: 20},
-                {id: 106, voters: 9000, participants: 2, resultDate: '1991-5-7', ruling: '4', authorityId: 30},
-                {id: 107, voters: 3000, participants: 7, resultDate: '1997-1-8', ruling: '4', authorityId: 10},
-                {id: 108, voters: 9500, participants: 9, resultDate: '1947-2-10', ruling: '5', authorityId: 20},
-                {id: 109, voters: 8500, participants: 8, resultDate: '1949-6-11', ruling: '5', authorityId: 30}
+                {id: 101, voters: 1000, participants: 6, resultDate: '2019-03-22', ruling: '5', authorityId: 10},
+                {id: 102, voters: 1100, participants: 7, resultDate: '2017-01-01', ruling: '6', authorityId: 20},
+                {id: 103, voters: 5000, participants: 8, resultDate: '2016-05-03', ruling: '5', authorityId: 30},
+                {id: 104, voters: 7000, participants: 5, resultDate: '2013-02-07', ruling: '5', authorityId: 10},
+                {id: 105, voters: 8000, participants: 3, resultDate: '1946-01-06', ruling: '6', authorityId: 20},
+                {id: 106, voters: 9000, participants: 2, resultDate: '1991-05-07', ruling: '4', authorityId: 30},
+                {id: 107, voters: 3000, participants: 7, resultDate: '1997-01-08', ruling: '4', authorityId: 10},
+                {id: 108, voters: 9500, participants: 9, resultDate: '1947-02-10', ruling: '5', authorityId: 20},
+                {id: 109, voters: 8500, participants: 8, resultDate: '1949-06-11', ruling: '5', authorityId: 30}
             ],
             votes: [
-                {id: 11, candidateId: 1, date: '1990-1-26', electionId: 103, voterId: 1},
-                {id: 12, candidateId: 2, date: '1995-1-26', electionId: 106, voterId: 2},
-                {id: 19, candidateId: 3, date: '2000-1-26', electionId: 101, voterId: 9},
-                {id: 110, candidateId: 5, date: '2005-1-26', electionId: 102, voterId: 10},
-                {id: 111, candidateId: 6, date: '2010-1-26', electionId: 104, voterId: 11},
-                {id: 112, candidateId: 8, date: '2015-1-26', electionId: 108, voterId: 12},
-                {id: 119, candidateId: 9, date: '2020-1-26', electionId: 107, voterId: 19},
-                {id: 120, candidateId: 7, date: '2005-1-26', electionId: 107, voterId: 20}
+                {id: 11, candidateId: 1, date: '1990-01-26', electionId: 103, voterId: 1},
+                {id: 12, candidateId: 2, date: '1995-01-26', electionId: 106, voterId: 2},
+                {id: 19, candidateId: 3, date: '2000-01-26', electionId: 101, voterId: 9},
+                {id: 110, candidateId: 5, date: '2005-01-26', electionId: 102, voterId: 10},
+                {id: 111, candidateId: 6, date: '2010-01-26', electionId: 104, voterId: 11},
+                {id: 112, candidateId: 8, date: '2015-01-26', electionId: 108, voterId: 12},
+                {id: 119, candidateId: 9, date: '2020-01-26', electionId: 107, voterId: 19},
+                {id: 120, candidateId: 7, date: '2005-01-26', electionId: 107, voterId: 20}
             ],
             citizens: [
-                {aadhaar: 1412, name: 'Bhargavi', dob: '2000-6-8', age: 20, gender: 'M'},
-                {aadhaar: 1493, name: 'Bala', dob: '1989-6-7', age: 31, gender: 'M'},
-                {aadhaar: 1734, name: 'Ram', dob: '1948-11-10', age: 72, gender: 'M'},
-                {aadhaar: 1812, name: 'Sita', dob: '1895-6-5', age: 125, gender: 'F'},
-                {aadhaar: 1914, name: 'Siva', dob: '1993-7-6', age: 27, gender: 'M'},
-                {aadhaar: 1617, name: 'Gopal', dob: '1991-8-6', age: 29, gender: 'M'},
-                {aadhaar: 1373, name: 'Govind', dob: '1982-5-7', age: 38, gender: 'M'},
-                {aadhaar: 1472, name: 'Krish', dob: '1990-1-8', age: 30, gender: 'M'},
-                {aadhaar: 1893, name: 'Mothra', dob: '1998-2-7', age: 22, gender: 'F'}
+                {aadhaar: 1412, name: 'Bhargavi', dob: '2000-06-08', age: 24, gender: 'F'},
+                {aadhaar: 1493, name: 'Bala', dob: '1989-06-07', age: 35, gender: 'M'},
+                {aadhaar: 1734, name: 'Ram', dob: '1948-11-10', age: 76, gender: 'M'},
+                {aadhaar: 1812, name: 'Sita', dob: '1895-06-05', age: 129, gender: 'F'},
+                {aadhaar: 1914, name: 'Siva', dob: '1993-07-06', age: 31, gender: 'M'},
+                {aadhaar: 1617, name: 'Gopal', dob: '1991-08-06', age: 33, gender: 'M'},
+                {aadhaar: 1373, name: 'Govind', dob: '1982-05-07', age: 42, gender: 'M'},
+                {aadhaar: 1472, name: 'Krish', dob: '1990-01-08', age: 34, gender: 'M'},
+                {aadhaar: 1893, name: 'Mothra', dob: '1998-02-07', age: 26, gender: 'F'}
             ],
             authorities: [
-                {id: 10, name: 'IEC', chief: 'Birla', experience: 'Y', established: '1998-8-15'},
-                {id: 20, name: 'MCC', chief: 'Sitaraman', experience: 'Y', established: '1989-8-15'},
-                {id: 30, name: 'AEC', chief: 'Chidambram', experience: 'N', established: '1998-8-15'}
+                {id: 10, name: 'IEC', chief: 'Birla', experience: 'Y', established: '1998-08-15'},
+                {id: 20, name: 'MCC', chief: 'Sitaraman', experience: 'Y', established: '1989-08-15'},
+                {id: 30, name: 'AEC', chief: 'Chidambram', experience: 'N', established: '1998-08-15'}
             ]
         };
+
+        let currentChart = null;
 
         // Helper Functions
         function getPartyName(partyId) {
@@ -521,6 +869,488 @@
             return authority ? authority.name : 'Unknown';
         }
 
+        function getNextId(array) {
+            return array.length > 0 ? Math.max(...array.map(item => item.id)) + 1 : 1;
+        }
+
+        function showAlert(elementId, message, type = 'success') {
+            const alertDiv = document.getElementById(elementId);
+            alertDiv.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => alertDiv.innerHTML = '', 3000);
+        }
+
+        // Modal Functions
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Party CRUD
+        function openAddPartyModal() {
+            document.getElementById('partyModalTitle').textContent = 'Add New Party';
+            document.getElementById('partyForm').reset();
+            document.getElementById('partyId').value = '';
+            openModal('partyModal');
+        }
+
+        function editParty(id) {
+            const party = db.parties.find(p => p.id === id);
+            if (party) {
+                document.getElementById('partyModalTitle').textContent = 'Edit Party';
+                document.getElementById('partyId').value = party.id;
+                document.getElementById('partyName').value = party.name;
+                document.getElementById('partySymbol').value = party.symbol;
+                openModal('partyModal');
+            }
+        }
+
+        function saveParty(event) {
+            event.preventDefault();
+            const id = document.getElementById('partyId').value;
+            const name = document.getElementById('partyName').value;
+            const symbol = document.getElementById('partySymbol').value;
+
+            if (id) {
+                const party = db.parties.find(p => p.id == id);
+                party.name = name;
+                party.symbol = symbol;
+                showAlert('partyAlert', 'Party updated successfully!');
+            } else {
+                db.parties.push({
+                    id: getNextId(db.parties),
+                    name: name,
+                    symbol: symbol
+                });
+                showAlert('partyAlert', 'Party added successfully!');
+            }
+
+            closeModal('partyModal');
+            renderParties();
+            renderDashboard();
+        }
+
+        function deleteParty(id) {
+            if (confirm('Are you sure you want to delete this party?')) {
+                db.parties = db.parties.filter(p => p.id !== id);
+                showAlert('partyAlert', 'Party deleted successfully!', 'danger');
+                renderParties();
+                renderDashboard();
+            }
+        }
+
+        // Candidate CRUD
+        function openAddCandidateModal() {
+            document.getElementById('candidateModalTitle').textContent = 'Add New Candidate';
+            document.getElementById('candidateForm').reset();
+            document.getElementById('candidateId').value = '';
+            populatePartySelect();
+            populateElectionSelect();
+            openModal('candidateModal');
+        }
+
+        function populatePartySelect() {
+            const select = document.getElementById('candidateParty');
+            select.innerHTML = '<option value="">-- Select Party --</option>';
+            db.parties.forEach(party => {
+                select.innerHTML += `<option value="${party.id}">${party.name}</option>`;
+            });
+        }
+
+        function populateElectionSelect() {
+            const selects = ['candidateElection', 'voteElection', 'voteElectionSelect'];
+            selects.forEach(selectId => {
+                const select = document.getElementById(selectId);
+                if (select) {
+                    select.innerHTML = '<option value="">-- Select Election --</option>';
+                    db.elections.forEach(election => {
+                        select.innerHTML += `<option value="${election.id}">Election ${election.id} (${election.resultDate})</option>`;
+                    });
+                }
+            });
+        }
+
+        function editCandidate(id) {
+            const candidate = db.candidates.find(c => c.id === id);
+            if (candidate) {
+                document.getElementById('candidateModalTitle').textContent = 'Edit Candidate';
+                document.getElementById('candidateId').value = candidate.id;
+                document.getElementById('candidateName').value = candidate.name;
+                populatePartySelect();
+                populateElectionSelect();
+                document.getElementById('candidateParty').value = candidate.partyId;
+                document.getElementById('candidateElection').value = candidate.electionId;
+                openModal('candidateModal');
+            }
+        }
+
+        function saveCandidate(event) {
+            event.preventDefault();
+            const id = document.getElementById('candidateId').value;
+            const name = document.getElementById('candidateName').value;
+            const partyId = parseInt(document.getElementById('candidateParty').value);
+            const electionId = parseInt(document.getElementById('candidateElection').value);
+
+            if (id) {
+                const candidate = db.candidates.find(c => c.id == id);
+                candidate.name = name;
+                candidate.partyId = partyId;
+                candidate.electionId = electionId;
+                showAlert('candidateAlert', 'Candidate updated successfully!');
+            } else {
+                db.candidates.push({
+                    id: getNextId(db.candidates),
+                    name: name,
+                    partyId: partyId,
+                    electionId: electionId
+                });
+                showAlert('candidateAlert', 'Candidate added successfully!');
+            }
+
+            closeModal('candidateModal');
+            renderCandidates();
+            renderDashboard();
+        }
+
+        function deleteCandidate(id) {
+            if (confirm('Are you sure you want to delete this candidate?')) {
+                db.candidates = db.candidates.filter(c => c.id !== id);
+                showAlert('candidateAlert', 'Candidate deleted successfully!', 'danger');
+                renderCandidates();
+                renderDashboard();
+            }
+        }
+
+        // Voter CRUD
+        function openAddVoterModal() {
+            document.getElementById('voterModalTitle').textContent = 'Register New Voter';
+            document.getElementById('voterForm').reset();
+            document.getElementById('voterId').value = '';
+            populateAuthoritySelect();
+            openModal('voterModal');
+        }
+
+        function populateAuthoritySelect() {
+            const selects = ['voterAuthority', 'electionAuthority'];
+            selects.forEach(selectId => {
+                const select = document.getElementById(selectId);
+                if (select) {
+                    select.innerHTML = '<option value="">-- Select Authority --</option>';
+                    db.authorities.forEach(auth => {
+                        select.innerHTML += `<option value="${auth.id}">${auth.name} (${auth.chief})</option>`;
+                    });
+                }
+            });
+        }
+
+        function editVoter(id) {
+            const voter = db.voters.find(v => v.id === id);
+            if (voter) {
+                document.getElementById('voterModalTitle').textContent = 'Edit Voter';
+                document.getElementById('voterId').value = voter.id;
+                document.getElementById('voterName').value = voter.name;
+                document.getElementById('voterGender').value = voter.sex;
+                populateAuthoritySelect();
+                document.getElementById('voterAuthority').value = voter.authorityId;
+                document.getElementById('voterAadhaar').value = voter.aadhaar;
+                openModal('voterModal');
+            }
+        }
+
+        function saveVoter(event) {
+            event.preventDefault();
+            const id = document.getElementById('voterId').value;
+            const name = document.getElementById('voterName').value;
+            const sex = document.getElementById('voterGender').value;
+            const authorityId = parseInt(document.getElementById('voterAuthority').value);
+            const aadhaar = parseInt(document.getElementById('voterAadhaar').value);
+
+            if (id) {
+                const voter = db.voters.find(v => v.id == id);
+                voter.name = name;
+                voter.sex = sex;
+                voter.authorityId = authorityId;
+                voter.aadhaar = aadhaar;
+                showAlert('voterAlert', 'Voter updated successfully!');
+            } else {
+                db.voters.push({
+                    id: getNextId(db.voters),
+                    name: name,
+                    sex: sex,
+                    authorityId: authorityId,
+                    aadhaar: aadhaar
+                });
+                showAlert('voterAlert', 'Voter registered successfully!');
+            }
+
+            closeModal('voterModal');
+            renderVoters();
+            renderDashboard();
+        }
+
+        function deleteVoter(id) {
+            if (confirm('Are you sure you want to delete this voter?')) {
+                db.voters = db.voters.filter(v => v.id !== id);
+                showAlert('voterAlert', 'Voter deleted successfully!', 'danger');
+                renderVoters();
+                renderDashboard();
+            }
+        }
+
+        // Election CRUD
+        function openAddElectionModal() {
+            document.getElementById('electionModalTitle').textContent = 'Create New Election';
+            document.getElementById('electionForm').reset();
+            document.getElementById('electionId').value = '';
+            populateAuthoritySelect();
+            openModal('electionModal');
+        }
+
+        function editElection(id) {
+            const election = db.elections.find(e => e.id === id);
+            if (election) {
+                document.getElementById('electionModalTitle').textContent = 'Edit Election';
+                document.getElementById('electionId').value = election.id;
+                document.getElementById('electionVoters').value = election.voters;
+                document.getElementById('electionParticipants').value = election.participants;
+                document.getElementById('electionResultDate').value = election.resultDate;
+                document.getElementById('electionRuling').value = election.ruling;
+                populateAuthoritySelect();
+                document.getElementById('electionAuthority').value = election.authorityId;
+                openModal('electionModal');
+            }
+        }
+
+        function saveElection(event) {
+            event.preventDefault();
+            const id = document.getElementById('electionId').value;
+            const voters = parseInt(document.getElementById('electionVoters').value);
+            const participants = parseInt(document.getElementById('electionParticipants').value);
+            const resultDate = document.getElementById('electionResultDate').value;
+            const ruling = document.getElementById('electionRuling').value;
+            const authorityId = parseInt(document.getElementById('electionAuthority').value);
+
+            if (id) {
+                const election = db.elections.find(e => e.id == id);
+                election.voters = voters;
+                election.participants = participants;
+                election.resultDate = resultDate;
+                election.ruling = ruling;
+                election.authorityId = authorityId;
+                showAlert('electionAlert', 'Election updated successfully!');
+            } else {
+                db.elections.push({
+                    id: getNextId(db.elections),
+                    voters: voters,
+                    participants: participants,
+                    resultDate: resultDate,
+                    ruling: ruling,
+                    authorityId: authorityId
+                });
+                showAlert('electionAlert', 'Election created successfully!');
+            }
+
+            closeModal('electionModal');
+            renderElections();
+            renderDashboard();
+        }
+
+        function deleteElection(id) {
+            if (confirm('Are you sure you want to delete this election?')) {
+                db.elections = db.elections.filter(e => e.id !== id);
+                showAlert('electionAlert', 'Election deleted successfully!', 'danger');
+                renderElections();
+                renderDashboard();
+            }
+        }
+
+        // Vote CRUD
+        function openAddVoteModal() {
+            populateCandidateSelect();
+            populateElectionSelect();
+            populateVoterSelect();
+            document.getElementById('voteDate').value = new Date().toISOString().split('T')[0];
+            openModal('voteModal');
+        }
+
+        function populateCandidateSelect() {
+            const select = document.getElementById('voteCandidate');
+            select.innerHTML = '<option value="">-- Select Candidate --</option>';
+            db.candidates.forEach(candidate => {
+                select.innerHTML += `<option value="${candidate.id}">${candidate.name} (${getPartyName(candidate.partyId)})</option>`;
+            });
+        }
+
+        function populateVoterSelect() {
+            const selects = ['voteVoter', 'voteVoterSelect'];
+            selects.forEach(selectId => {
+                const select = document.getElementById(selectId);
+                if (select) {
+                    select.innerHTML = '<option value="">-- Select Voter --</option>';
+                    db.voters.forEach(voter => {
+                        select.innerHTML += `<option value="${voter.id}">${voter.name} (ID: ${voter.id})</option>`;
+                    });
+                }
+            });
+        }
+
+        function saveVote(event) {
+            event.preventDefault();
+            const candidateId = parseInt(document.getElementById('voteCandidate').value);
+            const date = document.getElementById('voteDate').value;
+            const electionId = parseInt(document.getElementById('voteElection').value);
+            const voterId = parseInt(document.getElementById('voteVoter').value);
+
+            db.votes.push({
+                id: getNextId(db.votes),
+                candidateId: candidateId,
+                date: date,
+                electionId: electionId,
+                voterId: voterId
+            });
+
+            showAlert('voteAlert', 'Vote record added successfully!');
+            closeModal('voteModal');
+            renderResults();
+        }
+
+        function deleteVote(id) {
+            if (confirm('Are you sure you want to delete this vote?')) {
+                db.votes = db.votes.filter(v => v.id !== id);
+                showAlert('voteAlert', 'Vote deleted successfully!', 'danger');
+                renderResults();
+            }
+        }
+
+        // Voting System
+        function loadCandidatesForVoting() {
+            const electionId = parseInt(document.getElementById('voteElectionSelect').value);
+            const candidatesList = document.getElementById('candidatesVotingList');
+            
+            if (!electionId) {
+                candidatesList.innerHTML = '';
+                return;
+            }
+
+            const candidates = db.candidates.filter(c => c.electionId === electionId);
+            
+            if (candidates.length === 0) {
+                candidatesList.innerHTML = '<div class="vote-card"><p>No candidates available for this election.</p></div>';
+                return;
+            }
+
+            candidatesList.innerHTML = '<div class="vote-card"><h4>Select Candidate</h4>';
+            candidates.forEach(candidate => {
+                const party = db.parties.find(p => p.id === candidate.partyId);
+                candidatesList.innerHTML += `
+                    <div style="padding: 10px; margin: 5px 0; border: 2px solid #e0e0e0; border-radius: 5px; cursor: pointer;" 
+                         onclick="selectCandidate(${candidate.id})" 
+                         id="candidate-${candidate.id}">
+                        <strong>${candidate.name}</strong> - ${party ? party.name : 'Unknown'} (${party ? party.symbol : ''})
+                    </div>
+                `;
+            });
+            candidatesList.innerHTML += '</div>';
+            
+            populateVoterSelect();
+        }
+
+        let selectedCandidateId = null;
+
+        function selectCandidate(candidateId) {
+            document.querySelectorAll('[id^="candidate-"]').forEach(el => {
+                el.style.border = '2px solid #e0e0e0';
+                el.style.background = 'white';
+            });
+            
+            const selected = document.getElementById(`candidate-${candidateId}`);
+            selected.style.border = '2px solid #667eea';
+            selected.style.background = '#f0f4ff';
+            selectedCandidateId = candidateId;
+        }
+
+        function submitVote() {
+            const electionId = parseInt(document.getElementById('voteElectionSelect').value);
+            const voterId = parseInt(document.getElementById('voteVoterSelect').value);
+            
+            if (!electionId || !voterId || !selectedCandidateId) {
+                showAlert('votingAlert', 'Please select election, voter, and candidate!', 'danger');
+                return;
+            }
+
+            const existingVote = db.votes.find(v => v.voterId === voterId && v.electionId === electionId);
+            if (existingVote) {
+                showAlert('votingAlert', 'This voter has already voted in this election!', 'danger');
+                return;
+            }
+
+            db.votes.push({
+                id: getNextId(db.votes),
+                candidateId: selectedCandidateId,
+                date: new Date().toISOString().split('T')[0],
+                electionId: electionId,
+                voterId: voterId
+            });
+
+            showAlert('votingAlert', 'Vote cast successfully! 🗳️');
+            document.getElementById('voteElectionSelect').value = '';
+            document.getElementById('voteVoterSelect').value = '';
+            document.getElementById('candidatesVotingList').innerHTML = '';
+            selectedCandidateId = null;
+            
+            renderResults();
+        }
+
+        // Export Data
+        function exportData(type) {
+            const data = db[type];
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `${type}_export_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+        }
+
+        // Generate Results Report
+        function generateResultsReport() {
+            const report = {};
+            
+            db.elections.forEach(election => {
+                const electionVotes = db.votes.filter(v => v.electionId === election.id);
+                const candidateVotes = {};
+                
+                electionVotes.forEach(vote => {
+                    const candidate = db.candidates.find(c => c.id === vote.candidateId);
+                    if (candidate) {
+                        const candidateName = candidate.name;
+                        candidateVotes[candidateName] = (candidateVotes[candidateName] || 0) + 1;
+                    }
+                });
+                
+                const winner = Object.entries(candidateVotes).sort((a, b) => b[1] - a[1])[0];
+                
+                report[`Election ${election.id}`] = {
+                    totalVotes: electionVotes.length,
+                    candidateVotes: candidateVotes,
+                    winner: winner ? `${winner[0]} with ${winner[1]} votes` : 'No votes cast'
+                };
+            });
+            
+            const reportStr = JSON.stringify(report, null, 2);
+            const reportBlob = new Blob([reportStr], {type: 'application/json'});
+            const url = URL.createObjectURL(reportBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `election_results_report_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            showAlert('voteAlert', 'Results report generated and downloaded!');
+        }
+
         // Tab Navigation
         function showTab(tabName) {
             document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
@@ -534,6 +1364,12 @@
             else if (tabName === 'voters') renderVoters();
             else if (tabName === 'elections') renderElections();
             else if (tabName === 'results') renderResults();
+            else if (tabName === 'voting') loadVotingInterface();
+        }
+
+        function loadVotingInterface() {
+            populateElectionSelect();
+            populateVoterSelect();
         }
 
         // Search Function
@@ -569,7 +1405,11 @@
                 partyCounts[partyName] = (partyCounts[partyName] || 0) + 1;
             });
 
-            new Chart(ctx, {
+            if (currentChart) {
+                currentChart.destroy();
+            }
+
+            currentChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: Object.keys(partyCounts),
@@ -605,6 +1445,12 @@
                         <td><strong>${party.name}</strong></td>
                         <td>${party.symbol}</td>
                         <td><span class="badge badge-primary">${candidateCount} Candidates</span></td>
+                        <td>
+                            <div class="action-icons">
+                                <button class="icon-btn edit" onclick="editParty(${party.id})">✏️ Edit</button>
+                                <button class="icon-btn delete" onclick="deleteParty(${party.id})">🗑️ Delete</button>
+                            </div>
+                        </td>
                     </tr>
                 `;
             });
@@ -620,6 +1466,12 @@
                         <td><strong>${candidate.name}</strong></td>
                         <td>${getPartyName(candidate.partyId)}</td>
                         <td><span class="badge badge-info">Election ${candidate.electionId}</span></td>
+                        <td>
+                            <div class="action-icons">
+                                <button class="icon-btn edit" onclick="editCandidate(${candidate.id})">✏️ Edit</button>
+                                <button class="icon-btn delete" onclick="deleteCandidate(${candidate.id})">🗑️ Delete</button>
+                            </div>
+                        </td>
                     </tr>
                 `;
             });
@@ -636,6 +1488,12 @@
                         <td>${voter.sex === 'M' ? 'Male' : 'Female'}</td>
                         <td>${voter.authorityId}</td>
                         <td>${voter.aadhaar}</td>
+                        <td>
+                            <div class="action-icons">
+                                <button class="icon-btn edit" onclick="editVoter(${voter.id})">✏️ Edit</button>
+                                <button class="icon-btn delete" onclick="deleteVoter(${voter.id})">🗑️ Delete</button>
+                            </div>
+                        </td>
                     </tr>
                 `;
             });
@@ -653,6 +1511,12 @@
                         <td>${election.resultDate}</td>
                         <td>${election.ruling} years</td>
                         <td>${getAuthorityName(election.authorityId)}</td>
+                        <td>
+                            <div class="action-icons">
+                                <button class="icon-btn edit" onclick="editElection(${election.id})">✏️ Edit</button>
+                                <button class="icon-btn delete" onclick="deleteElection(${election.id})">🗑️ Delete</button>
+                            </div>
+                        </td>
                     </tr>
                 `;
             });
@@ -669,11 +1533,13 @@
                         <td>${vote.date}</td>
                         <td><span class="badge badge-info">Election ${vote.electionId}</span></td>
                         <td>${getVoterName(vote.voterId)}</td>
+                        <td>
+                            <button class="icon-btn delete" onclick="deleteVote(${vote.id})">🗑️ Delete</button>
+                        </td>
                     </tr>
                 `;
             });
 
-            // Votes Chart
             const ctx = document.getElementById('votesChart');
             const voteCounts = {};
             db.votes.forEach(v => {
@@ -681,7 +1547,11 @@
                 voteCounts[candidateName] = (voteCounts[candidateName] || 0) + 1;
             });
 
-            new Chart(ctx, {
+            if (ctx.chart) {
+                ctx.chart.destroy();
+            }
+
+            ctx.chart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
                     labels: Object.keys(voteCounts),
@@ -709,7 +1579,6 @@
 
             switch(queryNum) {
                 case 1:
-                    // Party with most candidates after 1989
                     const partyCounts = {};
                     db.votes.filter(v => new Date(v.date) >= new Date('1989-1-1')).forEach(v => {
                         const candidate = db.candidates.find(c => c.id === v.candidateId);
@@ -720,11 +1589,10 @@
                     });
                     const maxParty = Object.entries(partyCounts).sort((a,b) => b[1] - a[1])[0];
                     html = `<div class="query-section"><h3>Query 1: Party with Most Candidates (After 1989)</h3>
-                            <p><strong>Result:</strong> ${maxParty[0]} with ${maxParty[1]} candidates</p></div>`;
+                            <p><strong>Result:</strong> ${maxParty ? maxParty[0] + ' with ' + maxParty[1] + ' votes' : 'No data'}</p></div>`;
                     break;
 
                 case 2:
-                    // Voter change % 2010 to 2015
                     const votes2010 = db.votes.filter(v => v.date.includes('2010'));
                     const votes2015 = db.votes.filter(v => v.date.includes('2015'));
                     const election2010 = db.elections.find(e => votes2010.some(v => v.electionId === e.id));
@@ -735,38 +1603,51 @@
                                 <p><strong>2010 Voters:</strong> ${election2010.voters}</p>
                                 <p><strong>2015 Voters:</strong> ${election2015.voters}</p>
                                 <p><strong>Change:</strong> ${change}%</p></div>`;
+                    } else {
+                        html = '<div class="query-section"><h3>Query 2: Voter Change % (2010-2015)</h3><p>Data not available for comparison.</p></div>';
                     }
                     break;
 
                 case 3:
-                    // Election authority history
                     html = '<div class="query-section"><h3>Query 3: Election Authority History</h3><table><tr><th>Authority</th><th>Years Active</th></tr>';
                     db.authorities.forEach(auth => {
                         const years = db.votes.filter(v => {
                             const voter = db.voters.find(vr => vr.id === v.voterId);
                             return voter && voter.authorityId === auth.id;
                         }).map(v => new Date(v.date).getFullYear());
-                        html += `<tr><td>${auth.name}</td><td>${[...new Set(years)].sort().join(', ')}</td></tr>`;
+                        html += `<tr><td>${auth.name}</td><td>${[...new Set(years)].sort().join(', ') || 'No records'}</td></tr>`;
                     });
                     html += '</table></div>';
                     break;
 
                 case 4:
-                    // Non-voter citizens
                     const voterAadhaars = new Set(db.voters.map(v => v.aadhaar));
                     const nonVoters = db.citizens.filter(c => !voterAadhaars.has(c.aadhaar));
                     html = `<div class="query-section"><h3>Query 4: Citizens Who Are Not Voters</h3>
                             <p><strong>Total Non-Voters:</strong> ${nonVoters.length}</p>
-                            <p><strong>Names:</strong> ${nonVoters.map(c => c.name).join(', ')}</p></div>`;
+                            <p><strong>Names:</strong> ${nonVoters.map(c => c.name).join(', ') || 'None'}</p></div>`;
                     break;
 
                 case 5:
-                    // State assembly authorities
-                    html = `<div class="query-section"><h3>Query 5: Election Authorities</h3>
-                            <table><tr><th>Authority</th><th>Chief</th><th>Established</th><th>Experience</th></tr>`;
-                    db.authorities.forEach(auth => {
-                        html += `<tr><td>${auth.name}</td><td>${auth.chief}</td><td>${auth.established}</td>
-                                <td><span class="badge badge-${auth.experience === 'Y' ? 'success' : 'info'}">${auth.experience === 'Y' ? 'Experienced' : 'New'}</span></td></tr>`;
+                    const candidateVoteCounts = {};
+                    db.votes.forEach(v => {
+                        const candidateName = getCandidateName(v.candidateId);
+                        candidateVoteCounts[candidateName] = (candidateVoteCounts[candidateName] || 0) + 1;
+                    });
+                    const topCandidates = Object.entries(candidateVoteCounts).sort((a, b) => b[1] - a[1]).slice(0, 3);
+                    html = '<div class="query-section"><h3>Query 5: Top 3 Candidates by Votes</h3><table><tr><th>Rank</th><th>Candidate</th><th>Votes</th></tr>';
+                    topCandidates.forEach((c, i) => {
+                        html += `<tr><td>${i + 1}</td><td>${c[0]}</td><td><span class="badge badge-success">${c[1]} votes</span></td></tr>`;
+                    });
+                    html += '</table></div>';
+                    break;
+
+                case 6:
+                    html = '<div class="query-section"><h3>Query 6: Voter Turnout by Election</h3><table><tr><th>Election ID</th><th>Expected Voters</th><th>Actual Votes</th><th>Turnout %</th></tr>';
+                    db.elections.forEach(election => {
+                        const actualVotes = db.votes.filter(v => v.electionId === election.id).length;
+                        const turnout = ((actualVotes / election.voters) * 100).toFixed(2);
+                        html += `<tr><td>${election.id}</td><td>${election.voters}</td><td>${actualVotes}</td><td><span class="badge badge-${turnout > 50 ? 'success' : 'danger'}">${turnout}%</span></td></tr>`;
                     });
                     html += '</table></div>';
                     break;
@@ -784,6 +1665,13 @@
             renderElections();
             renderResults();
         };
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
     </script>
 </body>
 </html>
